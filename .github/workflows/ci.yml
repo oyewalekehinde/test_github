@@ -22,3 +22,4 @@ jobs:
          with:
            flutter-version: '3.29.0'
        - run: flutter pub get
+       - run: flutter build apk
