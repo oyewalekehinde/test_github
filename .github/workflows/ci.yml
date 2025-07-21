@@ -20,11 +20,23 @@ jobs:
         with:
           channel: 'stable'
           flutter-version: '3.32.7'
-      - run: |
-          echo "storePassword=qwerty12345" >> android/key.properties
-          echo "keyPassword=qwerty12345" >> android/key.properties
-          echo "keyAlias=my-key-alias" >> android/key.properties
-          echo "storeFile=my-release-key.jks" >> android/key.properties
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/my-release-key.jks
+
+      - name: Create key.properties
+        run: |
+          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" >> android/key.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
+          echo "storeFile=../app/my-release-key.jks" >> android/key.properties
       - run: flutter pub get
-      - run: flutter build apk --release
+
+      - name: Build release APK
+        run: flutter build apk --release
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk
+          path: build/app/outputs/bundle/release/app-release.apk
 
