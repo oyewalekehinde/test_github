@@ -31,6 +31,10 @@ jobs:
         with:
           name: project-build-number
           path: .
+      - name: List artifact contents
+        run: ls -R ./artifact
+      - name: Print build number
+        run: cat ./artifact/project-build-number.txt
       - name: Build release APK
         run: |
           echo "BUILD_NUMBER=$(cat project_build_number.txt)" >> $GITHUB_ENV
