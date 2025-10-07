@@ -26,14 +26,16 @@ jobs:
           echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
           echo "storeFile=../app/my-release-key.jks" >> android/key.properties
       - run: flutter pub get
-      - name: Show full path after upload
+      - name: Show full path before upload 
         run: ls -la $(pwd)
       - name: Download build number artifact
         uses: actions/download-artifact@v4
         with:
           name: project-build-number
           path: .
-      
+          run-id: ${ { github.event.workflow_run.id } }
+      - name: Show full path after upload 
+        run: ls -alh ./artifact
       - name: Build release APK
         run: |
           echo "BUILD_NUMBER=$(cat project_build_number.txt)" >> $GITHUB_ENV
