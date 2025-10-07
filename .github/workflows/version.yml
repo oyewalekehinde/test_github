@@ -28,4 +28,3 @@ jobs:
         with:
           name: project-build-number
           path: project-build-number.txt
-          retention-days: 7
