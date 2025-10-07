@@ -27,5 +27,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: project-build-number
-          path: project-build-number.txt
-          retention-days: 7
+          path: project_build_number.txt

@@ -33,8 +33,8 @@ jobs:
           path: .
       - name: Build release APK
         run: |
-          echo "BUILD_NUMBER=$(cat project-build-number.txt)" >> $GITHUB_ENV
-          PROJECT_BUILD_NUMBER=$(cat project-build-number.txt)
+          echo "BUILD_NUMBER=$(cat project_build_number.txt)" >> $GITHUB_ENV
+          PROJECT_BUILD_NUMBER=$(cat project_build_number.txt)
           buildNumber=$((PROJECT_BUILD_NUMBER - 869))
           buildName=2.$((PROJECT_BUILD_NUMBER / 100 + 1)).$((PROJECT_BUILD_NUMBER % 100 == 99 ? 0 : PROJECT_BUILD_NUMBER % 100 + 1))
           echo "Project Number $PROJECT_BUILD_NUMBER"
