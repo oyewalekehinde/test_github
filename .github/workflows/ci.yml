@@ -32,8 +32,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: project-build-number
-          path: .
-          run-id: ${ { github.event.workflow_run.id } }
+          path: ./artifact
+          run-id: ${{ github.event.workflow_run.id }}
       - name: Show full path after upload 
         run: ls -alh ./artifact
       - name: Build release APK
