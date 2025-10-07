@@ -28,3 +28,5 @@ jobs:
         with:
           name: project-build-number
           path: project_build_number.txt
+      - name: Show full path after upload
+        run: ls -la $(pwd)
