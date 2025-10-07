@@ -32,7 +32,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: project-build-number
-          path: ./artifact
+          path: ./artifacts
           run-id: ${{ github.event.workflow_run.id }}
       - name: Show full path after upload 
         run: ls -alh ./artifact

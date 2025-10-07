@@ -28,5 +28,6 @@ jobs:
         with:
           name: project-build-number
           path: project_build_number.txt
+          retention-days: 7 
       - name: Show full path after upload
         run: ls -la $(pwd)
