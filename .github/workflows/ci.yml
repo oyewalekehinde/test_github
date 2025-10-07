@@ -1,11 +1,9 @@
 name: CI
-on: 
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+on:
+  workflow_run:
+    workflows: ["Prepare Build Number"]
+    types:
+      - completed
 
 jobs:
   build:
@@ -33,7 +31,14 @@ jobs:
       - run: flutter pub get
 
       - name: Build release APK
-        run: flutter build apk --release
+        run: |
+          PROJECT_BUILD_NUMBER=$(cat project_build_number.txt)
+          buildNumber=$((PROJECT_BUILD_NUMBER - 869))
+          buildName=2.$((PROJECT_BUILD_NUMBER / 100 + 1)).$((PROJECT_BUILD_NUMBER % 100 == 99 ? 0 : PROJECT_BUILD_NUMBER % 100 + 1))
+          echo "Project Number $PROJECT_BUILD_NUMBER"
+          echo "Uploading buildNumber $buildNumber"
+          echo "Uploading buildName $buildName"
+          flutter build apk --release --build-number=$buildNumber --build-name=$buildName
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
