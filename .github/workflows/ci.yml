@@ -1,9 +1,9 @@
 name: Android Pipeline
 on:
-  workflow_run:
-    workflows: ["Prepare Build Number"]
-    types:
-      - completed
+  workflow_dispatch:   # 👈 THIS enables manual trigger
+  push:
+    branches: [ main ]
+  pull_request:
 
 jobs:
   build:
