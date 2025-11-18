@@ -1,57 +1,41 @@
 name: Android Gradle Build
 
 on:
-  workflow_dispatch:   # 👈 THIS enables manual trigger
-  push:
-    branches: [ main ]
-  pull_request:
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: android   # 👈 IMPORTANT for Flutter projects
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
-      # ---------------------------
-      # GRADLE REMOTE CACHE
-      # ---------------------------
-      - name: Restore gradle build cache
+      # -----------------------------------------
+      # GRADLE CACHING (reduces GitHub minutes)
+      # -----------------------------------------
+      - name: Restore gradle cache
         uses: actions/cache@v4
         with:
           path: |
-            ~/.gradle/caches/build-cache-1
-          key: gradle-build-cache-${{ runner.os }}-${{ github.sha }}
-          restore-keys: |
-            gradle-build-cache-${{ runner.os }}-
-
-      - name: Restore gradle wrapper & dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
+            ~/.gradle/caches
             ~/.gradle/wrapper
-            ~/.gradle/caches/modules-2
-          key: gradle-wrapper-${{ runner.os }}-${{ hashFiles('**/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
-            gradle-wrapper-${{ runner.os }}-
+            ${{ runner.os }}-gradle-
 
-      - name: Grant execute permission for gradlew
+      - name: Make gradlew executable
         run: chmod +x gradlew
 
-      - name: Build with Gradle
-        run: ./gradlew build --build-cache --stacktrace
-
-      # Save the updated build cache
-      - name: Save gradle build cache
-        uses: actions/cache/save@v4
-        with:
-          path: |
-            ~/.gradle/caches/build-cache-1
-          key: gradle-build-cache-${{ runner.os }}-${{ github.sha }}
+      - name: Build Android
+        run: ./gradlew assembleRelease --build-cache
