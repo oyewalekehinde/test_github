@@ -26,29 +26,28 @@ jobs:
           echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
           echo "storeFile=../app/my-release-key.jks" >> android/key.properties
       - run: flutter pub get
-      - name: Show full path before upload 
-        run: ls -la $(pwd)
-      - name: Download build number artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: project-build-number
-          path: ./artifacts
-          run-id: ${{ github.event.workflow_run.id }}
-      - name: Show full path after upload 
-        run: ls -alh ./artifact
+      # - name: Show full path before upload 
+      #   run: ls -la $(pwd)
+      # - name: Download build number artifact
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: project-build-number
+      #     path: ./artifacts
+      #     run-id: ${{ github.event.workflow_run.id }}
+      # - name: Show full path after upload 
+      #   run: ls -alh ./artifact
       - name: Build release APK
         run: |
-          echo "BUILD_NUMBER=$(cat project_build_number.txt)" >> $GITHUB_ENV
-          PROJECT_BUILD_NUMBER=$(cat project_build_number.txt)
-          buildNumber=$((PROJECT_BUILD_NUMBER - 869))
-          buildName=2.$((PROJECT_BUILD_NUMBER / 100 + 1)).$((PROJECT_BUILD_NUMBER % 100 == 99 ? 0 : PROJECT_BUILD_NUMBER % 100 + 1))
+          PROJECT_BUILD_NUMBER=10
+          buildNumber=115
+          buildName=2.10.20
           echo "Project Number $PROJECT_BUILD_NUMBER"
           echo "Uploading buildNumber $buildNumber"
           echo "Uploading buildName $buildName"
           flutter build apk --release --build-number=$buildNumber --build-name=$buildName
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+      # - name: Upload Artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: release-apk
+      #     path: build/app/outputs/flutter-apk/app-release.apk
 

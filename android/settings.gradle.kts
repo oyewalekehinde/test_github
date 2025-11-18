@@ -21,5 +21,17 @@ plugins {
     id("com.android.application") version "8.7.0" apply false
     id("org.jetbrains.kotlin.android") version "1.8.22" apply false
 }
+buildCache {
+    local {
+        isEnabled = true
+    }
+
+    // Remote but backed by GitHub cache
+    remote(HttpBuildCache::class) {
+        url = uri("https://github-actions-cache.fake/") // dummy URL required
+        isPush = true
+        isEnabled = true
+    }
+}
 
 include(":app")

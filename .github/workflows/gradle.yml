@@ -1,0 +1,57 @@
+name: Android Gradle Build
+
+on:
+  workflow_dispatch:   # 👈 THIS enables manual trigger
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      # ---------------------------
+      # GRADLE REMOTE CACHE
+      # ---------------------------
+      - name: Restore gradle build cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches/build-cache-1
+          key: gradle-build-cache-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            gradle-build-cache-${{ runner.os }}-
+
+      - name: Restore gradle wrapper & dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/wrapper
+            ~/.gradle/caches/modules-2
+          key: gradle-wrapper-${{ runner.os }}-${{ hashFiles('**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-wrapper-${{ runner.os }}-
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build --build-cache --stacktrace
+
+      # Save the updated build cache
+      - name: Save gradle build cache
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ~/.gradle/caches/build-cache-1
+          key: gradle-build-cache-${{ runner.os }}-${{ github.sha }}
