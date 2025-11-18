@@ -7,38 +7,54 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    # Run all commands inside android folder
     defaults:
       run:
-        working-directory: android
+        working-directory: android   # 👈 Android folder, where gradlew is
 
     steps:
       # 1️⃣ Checkout code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Set up JDK (needed for Gradle)
+      # 2️⃣ Set up Flutter
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.13.0'   # change to your Flutter version
+
+      # 3️⃣ Cache Flutter SDK & Pub packages
+      - name: Cache Flutter SDK & Pub
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/.pub-cache
+            ${{ github.workspace }}/flutter/bin/cache
+          key: flutter-${{ runner.os }}-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: |
+            flutter-${{ runner.os }}-
+
+      # 4️⃣ Set up Java (needed for Gradle)
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
-      # 3️⃣ Restore Gradle cache to speed up build
+      # 5️⃣ Restore Gradle cache
       - name: Restore Gradle cache
         uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
-            ${{ runner.os }}-gradle-
+            gradle-${{ runner.os }}-
 
-      # 4️⃣ Make gradlew executable
+      # 6️⃣ Make gradlew executable
       - name: Make gradlew executable
-        run: chmod +x android/gradlew
+        run: chmod +x gradlew
 
-      # 5️⃣ Build Android release APK (or you can change to assembleDebug)
-      - name: Build Android APK
-        run: android/gradlew assembleRelease --build-cache
+      # 7️⃣ Build APK with Gradle build cache
+      - name: Build Android Release APK
+        run: ./gradlew assembleRelease --build-cache
