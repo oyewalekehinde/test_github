@@ -7,24 +7,25 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    # Run all commands inside android folder
     defaults:
       run:
-        working-directory: android   # 👈 IMPORTANT for Flutter projects
+        working-directory: android
 
     steps:
-      - name: Checkout
+      # 1️⃣ Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2️⃣ Set up JDK (needed for Gradle)
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
-      # -----------------------------------------
-      # GRADLE CACHING (reduces GitHub minutes)
-      # -----------------------------------------
-      - name: Restore gradle cache
+      # 3️⃣ Restore Gradle cache to speed up build
+      - name: Restore Gradle cache
         uses: actions/cache@v4
         with:
           path: |
@@ -34,8 +35,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      # 4️⃣ Make gradlew executable
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      - name: Build Android
+      # 5️⃣ Build Android release APK (or you can change to assembleDebug)
+      - name: Build Android APK
         run: ./gradlew assembleRelease --build-cache
