@@ -1,8 +1,6 @@
 name: Android Pipeline
 on:
   workflow_dispatch:   # 👈 THIS enables manual trigger
-  push:
-  pull_request:
 
 jobs:
   build:
