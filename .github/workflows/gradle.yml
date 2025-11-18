@@ -37,7 +37,7 @@ jobs:
 
       # 4️⃣ Make gradlew executable
       - name: Make gradlew executable
-        run: cchmod +x android/gradlew
+        run: chmod +x android/gradlew
 
       # 5️⃣ Build Android release APK (or you can change to assembleDebug)
       - name: Build Android APK
